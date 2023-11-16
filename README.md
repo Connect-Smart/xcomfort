@@ -41,3 +41,4 @@ For instant, push based updates from xComfort SHC to Home Assistant you can try 
 For help or question open an issue. For new ideas or comments open an discussion
 
 
+# xcomfort
