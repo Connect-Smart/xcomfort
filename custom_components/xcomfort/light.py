@@ -96,14 +96,14 @@ class xcLight(LightEntity):
             if await self.coordinator.xc.switch(self._unique_id, str(brightness)):
                 self.coordinator.data[self.id]['value'] = str(brightness)
                 self.stored_brightness = brightness  # Update stored brightness
-                #self.async_write_ha_state()  # Corrected line
+                self.async_write_ha_state()  # Corrected line
                 _LOGGER.debug("xcLight.turn_on dimm %s success", self.name)
             else:
                 _LOGGER.debug("xcLight.turn_on dimm %s unsuccessful", self.name)
         else:
             if await self.coordinator.xc.switch(self._unique_id, "on"):
                 self.coordinator.data[self.id]['value'] = "ON"
-                #self.async_write_ha_state()  # Corrected line
+                self.async_write_ha_state()  # Corrected line
                 _LOGGER.debug("xcLight.turn_on %s success", self.name)
             else:
                 _LOGGER.debug("xcLight.turn_on %s unsuccessful", self.name)
@@ -113,14 +113,14 @@ class xcLight(LightEntity):
             if await self.coordinator.xc.switch(self._unique_id, "0"):
                 self.coordinator.data[self.id]['value'] = '0'
                 self.stored_brightness = int(255 * float(self.coordinator.data[self.id]['value']) / 100)
-                #self.async_write_ha_state()  # Corrected line
+                self.async_write_ha_state()  # Corrected line
                 _LOGGER.debug("xcLight.turn_off dimm %s success", self.name)
             else:
                 _LOGGER.debug("xcLight.turn_on dimm %s unsuccessful", self.name)
         else:
             if await self.coordinator.xc.switch(self._unique_id, "off"):
                 self.coordinator.data[self.id]['value'] = "OFF"
-                #self.async_write_ha_state()  # Corrected line
+                self.async_write_ha_state()  # Corrected line
                 _LOGGER.debug("xcLight.turn_off %s success", self.name)
             else:
                 _LOGGER.debug("xcLight.turn_off %s unsuccessful", self.name)
