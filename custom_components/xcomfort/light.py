@@ -12,10 +12,15 @@ async def async_setup_entry(hass, config_entry, async_add_entities):
     i = 0
     for device in coordinator.data:
         if device['type'].find("DimAct") >= 0:
+            dump(device)
             async_add_entities([xcLight(coordinator, i, device['id'], device['name'], device['type'])])
         if device['type'].find("LightAct") >= 0:
             async_add_entities([xcLight(coordinator, i, device['id'], device['name'], device['type'])])
         i += 1
+
+async def dump(obj):
+    for attr in dir(obj):
+        print("obj.%s = %r" % (attr, getattr(obj, attr)))
 
 
 class xcLight(LightEntity):
@@ -30,6 +35,7 @@ class xcLight(LightEntity):
         self._brightness = 255  # Initial brightness, change as needed
         _LOGGER.debug("xcLight.init()  done %s", self.name)
 
+
     @property
     def icon(self):
         if self.available:
@@ -39,10 +45,6 @@ class xcLight(LightEntity):
                 return "mdi:lightbulb-outline"
         else:
             return "mdi:exclamation-thick"
-
-    @property
-    def brightness(self):
-        return int(255 * float(self._brightness) / 100)
 
     @property
     def name(self):
@@ -91,15 +93,18 @@ class xcLight(LightEntity):
             self.coordinator.async_add_listener(self.async_write_ha_state)
         )
 
+    @property
+    def brightness(self):
+        return int(255 * float(self._brightness) / 100)
+
     async def async_turn_on(self, **kwargs):
         if self.type == 'DimActuator':
-            _LOGGER.debug("xcLight self._brightness %s", kwargs.get(ATTR_BRIGHTNESS, self._brightness))
-            brightness = int(kwargs.get(ATTR_BRIGHTNESS, self._brightness))
-            _LOGGER.debug("xcLight brightness %s ", brightness)
-            if await self.coordinator.xc.switch(self._unique_id, str(brightness)):
-                _LOGGER.debug("xcLight brightness %s success", brightness)
-                self._brightness = brightness  # Store the brightness state
-                await self.async_update()  # Update the state in Home Assistant
+            brightness = kwargs.get(ATTR_BRIGHTNESS, 255)
+            brightness_pct = int(100 * brightness / 255)
+            if await self.coordinator.xc.switch(self._unique_id, str(brightness_pct)):
+                self._brightness = brightness
+                self.coordinator.data[self.id]['value'] = str(brightness_pct)
+                await self.async_update_ha_state()
                 _LOGGER.debug("xcLight.turn_on dimm %s success", self.name)
             else:
                 _LOGGER.debug("xcLight.turn_on dimm %s unsuccessful", self.name)
@@ -124,7 +129,3 @@ class xcLight(LightEntity):
                 _LOGGER.debug("xcLight.turn_off %s success", self.name)
             else:
                 _LOGGER.debug("xcLight.turn_off %s unsuccessful", self.name)
-
-    async def async_update(self):
-        """Update the entity state."""
-        await self.async_update_ha_state()
