@@ -116,7 +116,9 @@ class xcLight(LightEntity):
         if self.type == 'DimActuator':
             if await self.coordinator.xc.switch(self._unique_id, "0"):
                 self.coordinator.data[self.id]['value'] = '0'
-                self.stored_brightness = int(255 * float(self.coordinator.data[self.id]['value']) / 100)
+                brightness = int(255 * float(self.coordinator.data[self.id]['value']) / 100)
+                if brightness > 0:
+                    self.stored_brightness = brightness  # Update stored brightness
                 #self.async_write_ha_state()  # Corrected line
                 _LOGGER.debug("xclight brightness %s", self.stored_brightness)
                 _LOGGER.debug("xcLight.turn_off dimm %s success", self.name)
