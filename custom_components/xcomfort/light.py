@@ -60,7 +60,7 @@ class xcLight(LightEntity):
 
     @property
     def brightness(self):
-        return int(255 * float(self.coordinator.data[self.id]['value']) / 100)
+        return int(100 * float(self.coordinator.data[self.id]['value']) / 255)
 
     @property
     def unique_id(self):
@@ -93,7 +93,10 @@ class xcLight(LightEntity):
     async def async_turn_on(self, **kwargs):
         if self.type == 'DimActuator':
             brightness = int(100 * kwargs.get(ATTR_BRIGHTNESS, self.stored_brightness) / 255)
+            _LOGGER.debug("xclight ATTR_BRIGHTNESS %s", ATTR_BRIGHTNESS)
+            _LOGGER.debug("xclight self.stored_brightness %s", self.stored_brightness)
             _LOGGER.debug("xclight brightness %s", brightness)
+            _LOGGER.debug("xclight kwargs %s", kwargs)
             if await self.coordinator.xc.switch(self._unique_id, str(brightness)):
                 self.coordinator.data[self.id]['value'] = str(brightness)
                 #self.stored_brightness = brightness  # Update stored brightness
@@ -114,7 +117,7 @@ class xcLight(LightEntity):
             if await self.coordinator.xc.switch(self._unique_id, "0"):
                 self.coordinator.data[self.id]['value'] = '0'
                 self.stored_brightness = int(255 * float(self.coordinator.data[self.id]['value']) / 100)
-                self.async_write_ha_state()  # Corrected line
+                #self.async_write_ha_state()  # Corrected line
                 _LOGGER.debug("xclight brightness %s", self.stored_brightness)
                 _LOGGER.debug("xcLight.turn_off dimm %s success", self.name)
             else:
