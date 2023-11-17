@@ -94,8 +94,8 @@ class xcLight(LightEntity):
         if self.type == 'DimActuator':
             brightness = int(100 * kwargs.get(ATTR_BRIGHTNESS, 255) / 255)
             if await self.coordinator.xc.switch(self._unique_id,str(brightness)):
-                #self.coordinator.data[self.id]['value']=str(brightness)
-                #await self.async_update_ha_state()
+                self.coordinator.data[self.id]['value']=str(brightness)
+                await self.async_update_ha_state()
                 _LOGGER.debug("xcLight.turn_on dimm %s success",self.name)
             else:
                 _LOGGER.debug("xcLight.turn_on dimm %s unsucessful",self.name)
@@ -109,7 +109,7 @@ class xcLight(LightEntity):
 
     async def async_turn_off(self, **kwargs):
         if self.type == 'DimActuator':
-            if await self.coordinator.xc.switch(self._unique_id,"0"):
+            if await self.coordinator.xc.switch(self._unique_id,"1"):
                 self.coordinator.data[self.id]['value']='1'
                 await self.async_update_ha_state()
                 _LOGGER.debug("xcLight.turn_off dimm %s success",self.name)
