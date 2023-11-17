@@ -42,7 +42,7 @@ class xcLight(LightEntity):
 
     @property
     def brightness(self):
-        return int(float(self._brightness))
+        return int(100 * float(self._brightness) / 255)
 
     @property
     def name(self):
