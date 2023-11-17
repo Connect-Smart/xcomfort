@@ -64,10 +64,6 @@ class xcLight(LightEntity):
         return self.coordinator.last_update_success
 
     @property
-    def brightness(self):
-        return int(255 * float(self.coordinator.data[self.id]['value']) /100 )
-
-    @property
     def unique_id(self):
         return self._unique_id
 
@@ -97,7 +93,7 @@ class xcLight(LightEntity):
 
     async def async_turn_on(self, **kwargs):
         if self.type == 'DimActuator':
-            brightness = int(255 * kwargs.get(ATTR_BRIGHTNESS, self._brightness) / 100)
+            brightness = int(100 * kwargs.get(ATTR_BRIGHTNESS, self._brightness) / 255)
             if await self.coordinator.xc.switch(self._unique_id, str(brightness)):
                 self._brightness = brightness  # Store the brightness state
                 await self.async_update()  # Update the state in Home Assistant
