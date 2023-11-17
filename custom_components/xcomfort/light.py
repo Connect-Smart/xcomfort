@@ -60,7 +60,7 @@ class xcLight(LightEntity):
 
     @property
     def brightness(self):
-        return int(255 * float(self.coordinator.data[self.id]['value']) / 100)
+        return int(100 * float(self.coordinator.data[self.id]['value']) / 255)
 
     @property
     def unique_id(self):
