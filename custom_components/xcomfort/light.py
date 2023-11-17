@@ -118,15 +118,15 @@ class xcLight(LightEntity):
             _LOGGER.debug("xclight self.stored_brightness %s", self.stored_brightness)
             _LOGGER.debug("xclight brightness %s", brightness)
             _LOGGER.debug("xcLight.turn_off dimm %s success", self.name)
+            brightness = int(255 * float(self.coordinator.data[self.id]['value']) / 100)
+            if brightness > 0:
+                self.stored_brightness = str(brightness)  # Update stored brightness
+            _LOGGER.debug("xclight ATTR_BRIGHTNESS %s", ATTR_BRIGHTNESS)
+            _LOGGER.debug("xclight self.stored_brightness %s", self.stored_brightness)
+            _LOGGER.debug("xclight brightness %s", brightness)
+            _LOGGER.debug("xcLight.turn_off dimm %s success", self.name)
             if await self.coordinator.xc.switch(self._unique_id, "0"):
                 self.coordinator.data[self.id]['value'] = '0'
-                brightness = int(255 * float(self.coordinator.data[self.id]['value']) / 100)
-                if brightness > 0:
-                    self.stored_brightness = str(brightness)  # Update stored brightness
-                _LOGGER.debug("xclight ATTR_BRIGHTNESS %s", ATTR_BRIGHTNESS)
-                _LOGGER.debug("xclight self.stored_brightness %s", self.stored_brightness)
-                _LOGGER.debug("xclight brightness %s", brightness)
-                _LOGGER.debug("xcLight.turn_off dimm %s success", self.name)
                 #self.async_write_ha_state()  # Corrected line
             else:
                 _LOGGER.debug("xcLight.turn_on dimm %s unsuccessful", self.name)
