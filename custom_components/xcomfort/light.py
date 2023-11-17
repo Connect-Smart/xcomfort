@@ -110,7 +110,7 @@ class xcLight(LightEntity):
                 _LOGGER.debug("xcLight.turn_on %s unsuccessful", self.name)
 
     async def async_turn_off(self, **kwargs):
-        if self.type == 'DimActuator':
+        if ATTR_BRIGHTNESS in kwargs:
             if await self.coordinator.xc.switch(self._unique_id, "0"):
                 self.coordinator.data[self.id]['value'] = '0'
                 self.stored_brightness = int(255 * float(self.coordinator.data[self.id]['value']) / 100)
