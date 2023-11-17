@@ -11,6 +11,8 @@ async def async_setup_entry(hass, config_entry, async_add_entities):
     coordinator = hass.data[DOMAIN]
     i = 0
     for device in coordinator.data:
+        _LOGGER.debug("xcLight.init() device[type] %s", device['type'])
+
         if device['type'].find("DimAct") >= 0:
             async_add_entities([xcLight(coordinator, i, device['id'], device['name'], device['type'])])
         if device['type'].find("LightAct") >= 0:
@@ -60,7 +62,8 @@ class xcLight(LightEntity):
 
     @property
     def brightness(self):
-        return int(255 * float(self.coordinator.data[self.id]['value']) / 100)
+        return self.coordinator.data[self.id]['value']
+        #return int(255 * float(self.coordinator.data[self.id]['value']) / 100)
 
     @property
     def unique_id(self):
