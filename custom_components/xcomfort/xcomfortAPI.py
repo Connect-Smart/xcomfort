@@ -59,7 +59,7 @@ class xcomfortAPI:
             file.close()
 
     async def query(self, method, params=['', '']):
-        #_LOGGER.debug("query(%s)",method)
+        _LOGGER.debug("query(%s)",method)
         rpc_headers = {
             'Cookie':self.sessionID,
             'Accept-Encoding': 'gzip, deflate',

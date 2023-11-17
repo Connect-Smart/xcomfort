@@ -11,7 +11,7 @@ async def async_setup_entry(hass, config_entry, async_add_entities):
     coordinator = hass.data[DOMAIN]
     i = 0
     for device in coordinator.data:
-        if device['type'].find("Dimmer") >= 0:
+        if device['type'].find("DimAct") >= 0:
             async_add_entities([xcLight(coordinator, i, device['id'], device['name'], device['type'])])
         if device['type'].find("LightAct") >= 0:
             async_add_entities([xcLight(coordinator, i, device['id'], device['name'], device['type'])])
@@ -49,7 +49,7 @@ class xcLight(LightEntity):
 
     @property
     def is_on(self):
-        if self.type == 'Dimmer':
+        if self.type == 'DimActuator':
             return bool(self.coordinator.data[self.id]['value'] != "0")
         else:
             return bool(self.coordinator.data[self.id]['value'] == 'ON')
@@ -80,7 +80,7 @@ class xcLight(LightEntity):
 
     @property
     def supported_features(self):
-        if self.type == 'Dimmer':
+        if self.type == 'DimActuator':
             return SUPPORT_BRIGHTNESS
         else:
             return 0
@@ -91,7 +91,7 @@ class xcLight(LightEntity):
         )
 
     async def async_turn_on(self, **kwargs):
-        if self.type == 'Dimmer':
+        if self.type == 'DimActuator':
             brightness = int(100 * kwargs.get(ATTR_BRIGHTNESS, 255) / 255)
             _LOGGER.debug("xcLight brightness: %s", brightness)
             brightness = int(kwargs.get(ATTR_BRIGHTNESS, self.stored_brightness))
@@ -112,7 +112,7 @@ class xcLight(LightEntity):
                 _LOGGER.debug("xcLight.turn_on %s unsuccessful", self.name)
 
     async def async_turn_off(self, **kwargs):
-        if self.type == 'Dimmer':
+        if self.type == 'DimActuator':
             if await self.coordinator.xc.switch(self._unique_id, "0"):
                 self.coordinator.data[self.id]['value'] = '0'
                 self.stored_brightness = int(255 * float(self.coordinator.data[self.id]['value']) / 100)
