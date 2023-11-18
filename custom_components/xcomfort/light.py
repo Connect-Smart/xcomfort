@@ -97,19 +97,20 @@ class xcLight(LightEntity):
 
     async def async_turn_on(self, **kwargs):
         _LOGGER.debug("xcLight.turn_on kwargs %s", kwargs)
-
-        if ATTR_BRIGHTNESS in kwargs:
+        if self.type == 'DimActuator' and ATTR_BRIGHTNESS in kwargs:
             brightness = int(100 * kwargs.get(ATTR_BRIGHTNESS, 255) / 255)
             _LOGGER.debug("xcLight.turn_on brightness %s", brightness)
 
             if await self.coordinator.xc.switch(self._unique_id, str(brightness)):
                 self._previous_brightness = brightness  # Store the current brightness
+                await self.async_update_ha_state()
                 _LOGGER.debug("xcLight.turn_on dimm %s success", self.name)
             else:
                 _LOGGER.debug("xcLight.turn_on dimm %s unsuccessful", self.name)
         else:
             if await self.coordinator.xc.switch(self._unique_id, "on"):
                 _LOGGER.debug("xcLight.turn_on %s success", self.name)
+                await self.async_update_ha_state()
             else:
                 _LOGGER.debug("xcLight.turn_on %s unsuccessful", self.name)
 
@@ -117,6 +118,7 @@ class xcLight(LightEntity):
         if await self.coordinator.xc.switch(self._unique_id, "off"):
             # Save the previous brightness before turning off
             self._previous_brightness = self.brightness
+            await self.async_update_ha_state()
             _LOGGER.debug("xcLight.turn_off dimm %s success", self.name)
         else:
             _LOGGER.debug("xcLight.turn_on dimm %s unsuccessful", self.name)
