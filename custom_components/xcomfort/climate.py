@@ -104,6 +104,55 @@ async def async_setup_entry(hass, config_entry, async_add_entities):
     except:
         pass
 
+    try:
+        if config_entry.data["heating_zone7"]!='':
+            zone_name = next(x for x in coordinator.xc.zones_list if x['zoneId']==config_entry.data["heating_zone7"])['zoneName']
+            async_add_entities([xcThermostat(coordinator, config_entry.data["heating_zone7_radiator"],
+                zone_name, config_entry.data["heating_zone7"], False)])
+    except:
+        pass
+
+
+    try:
+        if config_entry.data["heating_zone8"]!='':
+            zone_name = next(x for x in coordinator.xc.zones_list if x['zoneId']==config_entry.data["heating_zone8"])['zoneName']
+            async_add_entities([xcThermostat(coordinator, config_entry.data["heating_zone8_radiator"],
+                zone_name, config_entry.data["heating_zone8"], False)])
+    except:
+        pass
+
+    try:
+        if config_entry.data["heating_zone9"]!='':
+            zone_name = next(x for x in coordinator.xc.zones_list if x['zoneId']==config_entry.data["heating_zone9"])['zoneName']
+            async_add_entities([xcThermostat(coordinator, config_entry.data["heating_zone9_radiator"],
+                zone_name, config_entry.data["heating_zone9"], False)])
+    except:
+        pass
+
+    try:
+        if config_entry.data["heating_zone10"]!='':
+            zone_name = next(x for x in coordinator.xc.zones_list if x['zoneId']==config_entry.data["heating_zone10"])['zoneName']
+            async_add_entities([xcThermostat(coordinator, config_entry.data["heating_zone10_radiator"],
+                zone_name, config_entry.data["heating_zone10"], False)])
+    except:
+        pass
+
+    try:
+        if config_entry.data["heating_zone11"]!='':
+            zone_name = next(x for x in coordinator.xc.zones_list if x['zoneId']==config_entry.data["heating_zone11"])['zoneName']
+            async_add_entities([xcThermostat(coordinator, config_entry.data["heating_zone11_radiator"],
+                zone_name, config_entry.data["heating_zone11"], False)])
+    except:
+        pass
+
+    try:
+        if config_entry.data["heating_zone12"]!='':
+            zone_name = next(x for x in coordinator.xc.zones_list if x['zoneId']==config_entry.data["heating_zone12"])['zoneName']
+            async_add_entities([xcThermostat(coordinator, config_entry.data["heating_zone12_radiator"],
+                zone_name, config_entry.data["heating_zone12"], False)])
+    except:
+        pass
+
 class xcThermostat(CoordinatorEntity, ClimateEntity):
     _attr_target_temperature_step = PRECISION_HALVES
     _attr_hvac_mode= None
