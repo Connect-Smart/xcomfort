@@ -1,4 +1,4 @@
-###Version 1.3.5
+###Version 1.3.6
 from homeassistant.const import CONF_NAME
 from homeassistant import config_entries
 import voluptuous as vol
@@ -27,6 +27,19 @@ DATA_SCHEMA = vol.Schema(
         vol.Optional("heating_zone4_radiator",default=""): str,
         vol.Optional("heating_zone5",default=""): str,
         vol.Optional("heating_zone5_radiator",default=""): str
+        vol.Optional("heating_zone6",default=""): str,
+        vol.Optional("heating_zone6_radiator",default=""): str
+        vol.Optional("heating_zone7",default=""): str,
+        vol.Optional("heating_zone7_radiator",default=""): str
+        vol.Optional("heating_zone8",default=""): str,
+        vol.Optional("heating_zone8_radiator",default=""): str
+        vol.Optional("heating_zone9",default=""): str,
+        vol.Optional("heating_zone9_radiator",default=""): str
+        vol.Optional("heating_zone10",default=""): str,
+        vol.Optional("heating_zone11_radiator",default=""): str
+        vol.Optional("heating_zone12",default=""): str,
+        vol.Optional("heating_zone12_radiator",default=""): str
+
     }
 )
 
