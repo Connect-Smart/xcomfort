@@ -39,7 +39,6 @@ DATA_SCHEMA = vol.Schema(
         vol.Optional("heating_zone11_radiator",default=""): str,
         vol.Optional("heating_zone12",default=""): str,
         vol.Optional("heating_zone12_radiator",default=""): str
-
     }
 )
 
