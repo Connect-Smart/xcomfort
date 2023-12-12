@@ -1,22 +1,27 @@
-###Version 1.3.5
-from homeassistant.components.light import (ATTR_BRIGHTNESS,ATTR_BRIGHTNESS_PCT, SUPPORT_BRIGHTNESS, LightEntity)
-import json
+### Version 1.3.6
+from homeassistant.components.light import (
+    ATTR_BRIGHTNESS,
+    SUPPORT_BRIGHTNESS,
+    LightEntity,
+)
 import logging
-import asyncio
 
 from .const import DOMAIN
+
 _LOGGER = logging.getLogger(__name__)
 
 async def async_setup_entry(hass, config_entry, async_add_entities):
     coordinator = hass.data[DOMAIN]
     i = 0
+    entities = []
     for device in coordinator.data:
-        _LOGGER.debug("xcLight.init()  Device: %s", device)
-        if device['type'].find("DimAct") >= 0:
-            async_add_entities([xcLight(coordinator, i, device['id'], device['name'], device['type'])])
-        if device['type'].find("LightAct") >= 0:
-            async_add_entities([xcLight(coordinator, i, device['id'], device['name'], device['type'])])
-        i += 1
+        _LOGGER.debug("xcLight.init() Device: %s", device)
+        if "DimAct" in device["type"] or "LightAct" in device["type"]:
+            entities.append(
+                xcLight(coordinator, i, device["id"], device["name"], device["type"])
+            )
+            i += 1
+    async_add_entities(entities)
 
 
 class xcLight(LightEntity):
@@ -26,18 +31,15 @@ class xcLight(LightEntity):
         self.type = type
         self._unique_id = unique_name
         self.coordinator = coordinator
-        self.last_message_time = ''
-        self.messages_per_day = ''
+        self.last_message_time = ""
+        self.messages_per_day = ""
         self._previous_brightness = 10
-        _LOGGER.debug("xcLight.init()  done %s", self.name)
+        _LOGGER.debug("xcLight.init() done %s", self.name)
 
     @property
     def icon(self):
         if self.available:
-            if self.is_on:
-                return "mdi:lightbulb-on"
-            else:
-                return "mdi:lightbulb-outline"
+            return "mdi:lightbulb-on" if self.is_on else "mdi:lightbulb-outline"
         else:
             return "mdi:exclamation-thick"
 
@@ -47,14 +49,17 @@ class xcLight(LightEntity):
 
     @property
     def should_poll(self):
-        return False
+        return True
+
+    def update(self):
+        self.async_write_ha_state()
 
     @property
     def is_on(self):
-        if self.type == 'DimActuator':
-            return bool(self.coordinator.data[self.id]['value'] != "0")
+        if self.type == "DimActuator":
+            return bool(self.coordinator.data[self.id]["value"] != "0")
         else:
-            return bool(self.coordinator.data[self.id]['value'] == 'ON')
+            return bool(self.coordinator.data[self.id]["value"] == "ON")
 
     @property
     def available(self):
@@ -66,26 +71,27 @@ class xcLight(LightEntity):
 
     @property
     def extra_state_attributes(self):
-        stats_id = str(self._unique_id).replace('xCo','hdm:xComfort Adapter')
+        stats_id = str(self._unique_id).replace("xCo", "hdm:xComfort Adapter")
         try:
-            self.last_message_time = self.coordinator.xc.log_stats[stats_id]['lastMsgTimeStamp']
+            self.last_message_time = self.coordinator.xc.log_stats[stats_id][
+                "lastMsgTimeStamp"
+            ]
         except:
-            self.last_message_time = ''
-            self.messages_per_day = ''
+            self.last_message_time = ""
+            self.messages_per_day = ""
         else:
-            self.messages_per_day = self.coordinator.xc.log_stats[stats_id]['msgsPerDay']
-        return {"Messeges per day": self.messages_per_day, "Last message": self.last_message_time}
+            self.messages_per_day = self.coordinator.xc.log_stats[stats_id][
+                "msgsPerDay"
+            ]
+        return {"Messages per day": self.messages_per_day, "Last message": self.last_message_time}
 
     @property
     def brightness(self):
-        return int(255 * float(self.coordinator.data[self.id]['value']) / 100)
+        return int(255 * float(self.coordinator.data[self.id]["value"]) / 100)
 
     @property
     def supported_features(self):
-        if self.type == 'DimActuator':
-            return SUPPORT_BRIGHTNESS
-        else:
-            return 0
+        return SUPPORT_BRIGHTNESS if self.type == "DimActuator" else 0
 
     async def async_added_to_hass(self):
         self.async_on_remove(
@@ -94,7 +100,7 @@ class xcLight(LightEntity):
 
     async def async_turn_on(self, **kwargs):
         _LOGGER.debug("xcLight.turn_on kwargs %s", kwargs)
-        if self.type == 'DimActuator' and ATTR_BRIGHTNESS in kwargs:
+        if self.type == "DimActuator" and ATTR_BRIGHTNESS in kwargs:
             brightness = int(100 * kwargs.get(ATTR_BRIGHTNESS, 255) / 255)
             _LOGGER.debug("xcLight.turn_on brightness %s", brightness)
 
@@ -107,14 +113,14 @@ class xcLight(LightEntity):
         else:
             if await self.coordinator.xc.switch(self._unique_id, "on"):
                 _LOGGER.debug("xcLight.turn_on %s success", self.name)
-                await self.async_update_ha_state()
+                self.async_update_ha_state()
             else:
                 _LOGGER.debug("xcLight.turn_on %s unsuccessful", self.name)
 
     async def async_turn_off(self, **kwargs):
+        # Save the previous brightness before turning off
+        self._previous_brightness = self.brightness
         if await self.coordinator.xc.switch(self._unique_id, "off"):
-            # Save the previous brightness before turning off
-            self._previous_brightness = self.brightness
             self.async_update_ha_state()
             _LOGGER.debug("xcLight.turn_off dimm %s success", self.name)
         else:
