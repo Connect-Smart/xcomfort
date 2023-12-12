@@ -10,7 +10,7 @@
           "zone": "Zone",
           "scan_interval": "Refresh interval (s)",
           "heating_zone0": "Heating Zone 0",
-          "heating_zone0_radiator": "Heating Zone 0 RM",
+          "heating_zone0_radiator": "Heating Zone 0 radiator",
           "heating_zone1": "Heating Zone 1",
           "heating_zone1_radiator": "Heating Zone 1 radiator",
           "heating_zone2": "Heating Zone 2",
@@ -22,7 +22,19 @@
           "heating_zone5": "Heating Zone 5",
           "heating_zone5_radiator": "Heating Zone 5 radiator",
           "heating_zone6": "Heating Zone 6",
-          "heating_zone_radiator": "Heating Zone 6 radiator"
+          "heating_zone6_radiator": "Heating Zone 6 radiator",
+          "heating_zone7": "Heating Zone 7",
+          "heating_zone7_radiator": "Heating Zone 7 radiator",
+          "heating_zone8": "Heating Zone 8",
+          "heating_zone8_radiator": "Heating Zone 8 radiator",
+          "heating_zone9": "Heating Zone 9",
+          "heating_zone9_radiator": "Heating Zone 9 radiator",
+          "heating_zone10": "Heating Zone 10",
+          "heating_zone10_radiator": "Heating Zone 10 radiator",
+          "heating_zone11": "Heating Zone 11",
+          "heating_zone11_radiator": "Heating Zone 11 radiator",
+          "heating_zone12": "Heating Zone 12",
+          "heating_zone12_radiator": "Heating Zone 12 radiator"
         }
       }
     }
